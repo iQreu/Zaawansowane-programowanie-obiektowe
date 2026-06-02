@@ -126,3 +126,15 @@ View (klik) → RelayCommand → ViewModel.TransferAsync()
 - Naliczanie odsetek (polimorfizm wg typu konta).
 - Reguły `CanWithdraw` (debet, limit kredytowy).
 - Logika przelewu (repozytorium in-memory / EF InMemory).
+
+## 11. Dokument wyjaśniający (`DOKUMENTACJA.md`)
+
+Prowadzony równolegle z implementacją dokument w korzeniu repozytorium. Dla
+każdego z 12 wymaganych mechanizmów (oraz dodatków) opisuje:
+- **Co** — który mechanizm i jego krótkie wyjaśnienie.
+- **Jak** — konkretne miejsce w kodzie (`plik:linia`) + krótki fragment.
+- **Dlaczego** — uzasadnienie, dlaczego użyto go akurat w tym miejscu
+  (a nie sztucznie).
+
+Aktualizowany po każdym etapie planu, tak by na końcu stanowił kompletną
+ściągę do obrony/oddania projektu.
