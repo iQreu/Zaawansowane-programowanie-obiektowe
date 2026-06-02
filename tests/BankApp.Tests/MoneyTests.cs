@@ -51,4 +51,25 @@ public class MoneyTests
     {
         Assert.Equal(10m, (decimal)new Money(10m));
     }
+
+    [Fact]
+    public void Zero_ReturnsZeroAmountInGivenCurrency()
+    {
+        Assert.Equal(new Money(0m, "EUR"), Money.Zero("EUR"));
+        Assert.Equal(new Money(0m, "PLN"), Money.Zero());
+    }
+
+    [Fact]
+    public void UnaryNegation_FlipsSign_KeepsCurrency()
+    {
+        var negated = -new Money(10m, "PLN");
+        Assert.Equal(new Money(-10m, "PLN"), negated);
+    }
+
+    [Fact]
+    public void ComparisonOnDifferentCurrencies_Throws()
+    {
+        Assert.Throws<InvalidOperationException>(() => new Money(1m, "PLN") > new Money(1m, "EUR"));
+        Assert.Throws<InvalidOperationException>(() => new Money(1m, "PLN") - new Money(1m, "EUR"));
+    }
 }
