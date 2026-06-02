@@ -9,16 +9,20 @@
 
         <!-- Nagłówek -->
         <Border DockPanel.Dock="Top" Background="{StaticResource NavyBrush}" Padding="20,14">
-            <StackPanel Orientation="Horizontal">
-                <Border Width="36" Height="36" Background="{StaticResource AccentBrush}" CornerRadius="9" Margin="0,0,12,0">
-                    <TextBlock Text="B" Foreground="White" FontWeight="Bold" FontSize="19"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="BankApp" Foreground="White" FontSize="18" FontWeight="Bold"/>
-                    <TextBlock Text="System bankowy — projekt zaawansowanej obiektowości" Foreground="#AEC2E6" FontSize="11"/>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="Autor: Robert 82570" Foreground="#AEC2E6"
+                           FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="36" Height="36" Background="{StaticResource AccentBrush}" CornerRadius="9" Margin="0,0,12,0">
+                        <TextBlock Text="B" Foreground="White" FontWeight="Bold" FontSize="19"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="BankApp" Foreground="White" FontSize="18" FontWeight="Bold"/>
+                        <TextBlock Text="System bankowy — projekt zaawansowanej obiektowości" Foreground="#AEC2E6" FontSize="11"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </DockPanel>
         </Border>
 
         <!-- Pasek statusu -->
