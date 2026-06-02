@@ -1,12 +1,70 @@
-﻿<Window x:Class="BankApp.Wpf.MainWindow"
+<Window x:Class="BankApp.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BankApp.Wpf"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="BankApp" Height="600" Width="900">
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem><TextBlock Text="{Binding Status}"/></StatusBarItem>
+        </StatusBar>
+        <TabControl>
+            <TabItem Header="Konta i operacje">
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
 
-    </Grid>
+                    <ListBox Grid.Column="0" ItemsSource="{Binding Accounts}"
+                             SelectedItem="{Binding SelectedAccount}"
+                             DisplayMemberPath="."/>
+
+                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                        <TextBlock Text="Historia transakcji:" FontWeight="Bold"/>
+                        <DataGrid ItemsSource="{Binding Transactions}" AutoGenerateColumns="False"
+                                  IsReadOnly="True" Height="220" Margin="0,4">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Data" Binding="{Binding Timestamp}"/>
+                                <DataGridTextColumn Header="Typ" Binding="{Binding Type}"/>
+                                <DataGridTextColumn Header="Kwota" Binding="{Binding Amount}"/>
+                                <DataGridTextColumn Header="Opis" Binding="{Binding Description}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock Text="Kwota:"/>
+                        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4">
+                            <Button Content="Wpłać" Command="{Binding DepositCommand}" Width="90" Margin="0,0,4,0"/>
+                            <Button Content="Wypłać" Command="{Binding WithdrawCommand}" Width="90"/>
+                        </StackPanel>
+                        <TextBlock Text="Numer konta docelowego (przelew):"/>
+                        <TextBox Text="{Binding TargetNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Content="Przelej" Command="{Binding TransferCommand}" Width="90" HorizontalAlignment="Left" Margin="0,4"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Nowe konto">
+                <StackPanel Margin="8" Width="360" HorizontalAlignment="Left">
+                    <TextBlock Text="Typ konta (wykryty przez refleksję):"/>
+                    <ComboBox ItemsSource="{Binding AccountTypes}"
+                              SelectedItem="{Binding SelectedType}"
+                              DisplayMemberPath="DisplayName"/>
+                    <TextBlock Text="{Binding SelectedType.Description}" TextWrapping="Wrap" Margin="0,4"/>
+                    <Button Content="Otwórz konto" Command="{Binding OpenAccountCommand}" Margin="0,8" Width="120" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Diagnostyka / Raport" DataContext="{Binding Diagnostics}">
+                <DockPanel Margin="8">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <Button Content="Generuj raport CSV" Command="{Binding GenerateReportCommand}" Width="160"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Wykryte typy kont (refleksja):" FontWeight="Bold" Margin="0,8,0,0"/>
+                    <ListBox DockPanel.Dock="Top" ItemsSource="{Binding DiscoveredTypes}" DisplayMemberPath="DisplayName" Height="80"/>
+                    <TextBox Text="{Binding Report, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto" FontFamily="Consolas"/>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>
