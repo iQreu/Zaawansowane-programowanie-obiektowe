@@ -65,10 +65,11 @@ public sealed class MainViewModel : ViewModelBase
 
     public async Task LoadAsync()
     {
+        var savedNumber = SelectedAccount?.Number;
         Accounts.Clear();
         foreach (var a in await _accounts.GetAllAsync())
             Accounts.Add(a);
-        SelectedAccount = Accounts.FirstOrDefault();
+        SelectedAccount = Accounts.FirstOrDefault(a => a.Number == savedNumber) ?? Accounts.FirstOrDefault();
     }
 
     private async Task DepositAsync()

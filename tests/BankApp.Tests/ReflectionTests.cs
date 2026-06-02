@@ -31,6 +31,15 @@ public class ReflectionTests
         {
             new SavingsAccount("PL1", "PLN")
         });
-        Assert.Contains("Number", report);
+        Assert.Contains("Numer konta", report);
+    }
+
+    [Fact]
+    public void ReportGenerator_UsesReportColumnAttributeHeader()
+    {
+        var report = ReportGenerator.Generate(new[] { new SavingsAccount("PL1", "PLN") });
+        var headerLine = report.Split('\n')[0];
+        Assert.Contains("Numer konta", headerLine);   // nagłówek z [ReportColumn]
+        Assert.DoesNotContain("Number", headerLine);   // surowa nazwa właściwości nie powinna już być nagłówkiem
     }
 }

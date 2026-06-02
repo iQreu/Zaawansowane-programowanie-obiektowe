@@ -1,3 +1,5 @@
+using BankApp.Core.Attributes;
+
 namespace BankApp.Core.Accounts;
 
 public abstract class Account
@@ -5,8 +7,11 @@ public abstract class Account
     private readonly List<Transaction> _transactions = new();
 
     public int Id { get; set; }
+    [ReportColumn("Numer konta")]
     public string Number { get; set; } = string.Empty;
+    [ReportColumn("Waluta")]
     public string Currency { get; set; } = "PLN";
+    [ReportColumn("Saldo")]
     public decimal BalanceAmount { get; set; }      // kolumna w bazie
     public int CustomerId { get; set; }
     public Customer? Customer { get; set; }
