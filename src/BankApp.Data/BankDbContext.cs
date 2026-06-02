@@ -1,9 +1,31 @@
 using BankApp.Core;
 using BankApp.Core.Accounts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BankApp.Data;
+
+/// <summary>
+/// Interceptor synchronizujący shadow property "CustomerFk" z domenową właściwością
+/// Account.CustomerId po zmaterializowaniu encji przez EF Core.
+/// Używa MaterializationInterceptionData.GetPropertyValue zamiast Context.Entry,
+/// aby nie ingerować w zmianę śledzenia podczas materializacji.
+/// </summary>
+internal sealed class CustomerFkSyncInterceptor : IMaterializationInterceptor
+{
+    public static readonly CustomerFkSyncInterceptor Instance = new();
+
+    public object InitializedInstance(MaterializationInterceptionData materializationData, object instance)
+    {
+        if (instance is Account account)
+        {
+            var fk = materializationData.GetPropertyValue<int?>("CustomerFk");
+            account.CustomerId = fk ?? 0;
+        }
+        return instance;
+    }
+}
 
 public class BankDbContext : DbContext
 {
@@ -12,6 +34,13 @@ public class BankDbContext : DbContext
     public DbSet<Transaction> Transactions => Set<Transaction>();
 
     public BankDbContext(DbContextOptions<BankDbContext> options) : base(options) { }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        // Rejestrujemy interceptor synchronizacji CustomerId z shadow FK.
+        // Wywołanie AddInterceptors jest idempotentne — nie duplikuje interceptorów.
+        optionsBuilder.AddInterceptors(CustomerFkSyncInterceptor.Instance);
+    }
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -45,7 +74,10 @@ public class BankDbContext : DbContext
 
         // CustomerId jest int (nie int?) — EF Core nie pozwoli oznaczyć go jako nullable.
         // Relację Customer->Accounts konfigurujemy przez shadow property "CustomerFk" (int?),
-        // żeby FK kolumna w SQLite była NULL-owalna. CustomerId mapujemy osobno jako zwykłą kolumnę.
+        // żeby FK kolumna w SQLite była NULL-owalna (konto bez klienta). Domain property
+        // Account.CustomerId jest ignorowana w persystencji i synchronizowana przez
+        // CustomerFkSyncInterceptor przy materializacji encji.
+        b.Entity<Account>().Ignore(a => a.CustomerId);
         b.Entity<Account>().Property<int?>("CustomerFk").HasColumnName("CustomerId");
         b.Entity<Customer>()
             .HasMany(c => c.Accounts)
