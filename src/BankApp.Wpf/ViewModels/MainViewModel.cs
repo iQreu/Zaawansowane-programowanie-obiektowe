@@ -28,8 +28,8 @@ public sealed class MainViewModel : ViewModelBase
 
     public IEnumerable<Transaction> Transactions => _selectedAccount?.Transactions ?? Enumerable.Empty<Transaction>();
 
-    private decimal _amount;
-    public decimal Amount { get => _amount; set => SetField(ref _amount, value); }
+    private decimal? _amount;
+    public decimal? Amount { get => _amount; set => SetField(ref _amount, value); }
 
     private string _targetNumber = string.Empty;
     public string TargetNumber { get => _targetNumber; set => SetField(ref _targetNumber, value); }
@@ -74,21 +74,21 @@ public sealed class MainViewModel : ViewModelBase
 
     private async Task DepositAsync()
     {
-        var result = await _service.DepositAsync(SelectedAccount!.Number, new Money(Amount));
+        var result = await _service.DepositAsync(SelectedAccount!.Number, new Money(Amount!.Value));
         Report(result.IsSuccess, result.Error ?? $"Wpłacono {Amount:N2}.");
         await LoadAsync();
     }
 
     private async Task WithdrawAsync()
     {
-        var result = await _service.WithdrawAsync(SelectedAccount!.Number, new Money(Amount));
+        var result = await _service.WithdrawAsync(SelectedAccount!.Number, new Money(Amount!.Value));
         Report(result.IsSuccess, result.Error ?? $"Wypłacono {Amount:N2}.");
         await LoadAsync();
     }
 
     private async Task TransferAsync()
     {
-        var result = await _service.TransferAsync(SelectedAccount!.Number, TargetNumber, new Money(Amount));
+        var result = await _service.TransferAsync(SelectedAccount!.Number, TargetNumber, new Money(Amount!.Value));
         Report(result.IsSuccess, result.Error ?? $"Przelano {Amount:N2} na {TargetNumber}.");
         await LoadAsync();
     }
